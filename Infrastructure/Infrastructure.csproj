@@ -13,5 +13,9 @@
   <ItemGroup>
 	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="DataContext\Migrations\" />
+  </ItemGroup>
 
 </Project>
