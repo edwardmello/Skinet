@@ -9,16 +9,17 @@ using Microsoft.Extensions.Logging;
 using System;
 using Infrastructure.DataContext.SeedData;
 using Skinet.Helpers;
+using Skinet.Middleware;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using Skinet.Errors;
+using Skinet.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped(typeof(IGenericRepository<>),(typeof(GenericRepository<>)));
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
-
 
 builder.Services.AddDbContext<StoreContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SkinetConnection")));
@@ -26,16 +27,15 @@ builder.Services.AddDbContext<StoreContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerDocumentation();
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseSwaggerDocumentation();
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
 
