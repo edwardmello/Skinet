@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Skinet.Errors
+﻿namespace Skinet.Errors
 {
     public class ApiResponse
     {

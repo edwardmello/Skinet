@@ -2,17 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Infrastructure.DataContext;
-using Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using Infrastructure.DataContext.SeedData;
 using Skinet.Helpers;
 using Skinet.Middleware;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using Skinet.Errors;
 using Skinet.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +24,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation();
 builder.Services.AddApplicationServices();
+builder.Services.AddCors(opt => 
+{
+    opt.AddPolicy("CorsPolicy", policy =>
+     {
+         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:7255");
+     });
+});
 
 var app = builder.Build();
 
@@ -40,6 +42,8 @@ app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 

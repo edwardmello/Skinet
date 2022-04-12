@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Infrastructure.DataContext;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Core.Models;
 using Core.Interfaces;
@@ -12,10 +8,11 @@ using Core.Specifications;
 using Skinet.Dtos;
 using AutoMapper;
 using Skinet.Errors;
+using Skinet.Helpers;
 
 namespace Skinet.Controllers
 {
- 
+
     public class ProductsController : BaseAPiController
     {
         private readonly IGenericRepository<Product> _productsRepo;
@@ -35,11 +32,16 @@ namespace Skinet.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts(
+            [FromQuery]ProductsSpecParams productsParams)
         {
-            var products = await _productsRepo.ListAsync(new ProductsWithTypesAndBrandsSpecification());
-            return Ok(
-                    _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products)
+            var spec = new ProductsWithTypesAndBrandsSpecification(productsParams);
+            var countSpec = new ProductWithFiltersForCountSpecification(productsParams);
+            var totalItems = await _productsRepo.CountAsync(countSpec);
+            var products = await _productsRepo.ListAsync(spec);
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+            return Ok(new Pagination<ProductToReturnDto>(productsParams.PageIndex,productsParams.PageSize,
+                totalItems,data)
                 );
         }
 
