@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "040bc92d-5891-46cb-8786-059066e44a60": {
+      "ProjectGuid": "040bc92d-5891-46cb-8786-059066e44a60",
+      "DisplayName": "Core",
+      "ColorIndex": 0
+    },
+    "348919b6-aa99-4d70-a87a-2182dd4bd094": {
+      "ProjectGuid": "348919b6-aa99-4d70-a87a-2182dd4bd094",
+      "DisplayName": "Skinet",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}
